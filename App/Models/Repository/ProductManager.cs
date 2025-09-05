@@ -1,8 +1,9 @@
+using App.Models.EntityFramework;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.Models.Repository;
 
-public class ProductManager : IDataRepository<Produit>
+public class ProductManager(AppDbContext context) : IDataRepository<Produit>
 {
     public async Task<ActionResult<IEnumerable<Produit>>> GetAllAsync()
     {
@@ -11,7 +12,7 @@ public class ProductManager : IDataRepository<Produit>
 
     public async Task<ActionResult<Produit?>> GetByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        return await context.Produits.FindAsync(id);
     }
 
     public async Task<ActionResult<Produit?>> GetByStringAsync(string str)

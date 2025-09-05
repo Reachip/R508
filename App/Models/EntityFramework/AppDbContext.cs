@@ -6,6 +6,8 @@ namespace App.Models.EntityFramework;
 
 public partial class AppDbContext : DbContext
 {
+    public DbSet<Produit> Produits { get; set; }
+    
     public AppDbContext()
     {
     }
