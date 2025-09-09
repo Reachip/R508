@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using App.Controllers;
 using App.Models;
 using App.Models.EntityFramework;
@@ -7,7 +6,7 @@ using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace App.Tests.Controllers;
+namespace Tests.Controllers;
 
 [TestClass]
 [TestSubject(typeof(ProductController))]
@@ -15,13 +14,13 @@ public class ProductControllerTest
 {
     private readonly AppDbContext  _context;
     private readonly ProductController _productController;
-    private readonly ProductManager _manager;
 
     public ProductControllerTest()
     {
         _context = new AppDbContext();
-        _manager = new ProductManager(_context);
-        _productController = new ProductController(_manager);
+        
+        var manager = new ProductManager(_context);
+        _productController = new ProductController(manager);
     }
     
     [TestMethod]
