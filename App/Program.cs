@@ -1,3 +1,4 @@
+using App.Models;
 using App.Models.EntityFramework;
 using App.Models.Repository;
 
@@ -16,7 +17,7 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddDbContext<AppDbContext>();
-        builder.Services.AddScoped<ProductManager>();
+        builder.Services.AddScoped<IDataRepository<Produit>, ProductManager>();
         
         var app = builder.Build();
 

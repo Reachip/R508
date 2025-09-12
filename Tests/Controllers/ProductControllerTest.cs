@@ -20,6 +20,7 @@ public class ProductControllerTest
     public ProductControllerTest()
     {
         _context = new AppDbContext();
+        
         var manager = new ProductManager(_context);
         _productController = new ProductController(manager);
     }
@@ -48,8 +49,6 @@ public class ProductControllerTest
         
         Produit returnProduct = action.Value;
         Assert.AreEqual(produitInDb.NomProduit, returnProduct.NomProduit);
-        
-        // Assert.IsInstanceOfType(action.Result, typeof(OkObjectResult));
     }
 
     [TestMethod]
@@ -139,10 +138,11 @@ public class ProductControllerTest
         Assert.IsNull(action.Value, "Le produit n'est pas null");
     }
     
+    [TestMethod]
     public void ShouldCreateProduct()
     {
         // Given
-        Produit productToInsert = new Produit()
+        Produit productToInsert = new()
         {
             NomProduit = "Chaise",
             Description = "Une superbe chaise",
@@ -165,7 +165,7 @@ public class ProductControllerTest
     public void ShouldUpdateProduct()
     {
         // Given 
-        Produit produitToEdit = new Produit()
+        Produit produitToEdit = new()
         {
             NomProduit = "Bureau",
             Description = "Un super bureau",
@@ -188,15 +188,16 @@ public class ProductControllerTest
         
         Produit editedProductInDb = _context.Produits.Find(produitToEdit.IdProduit);
         
+        Assert.IsNotNull(editedProductInDb);
         Assert.AreEqual(produitToEdit.NomProduit, editedProductInDb.NomProduit);
         Assert.AreEqual(produitToEdit.Description, editedProductInDb.Description);
     }
     
     [TestMethod]
-    public void ShouldNotUpdateProductBecauseIdInURLIsDifferent()
+    public void ShouldNotUpdateProductBecauseIdInUrlIsDifferent()
     {
         // Given 
-        Produit produitToEdit = new Produit()
+        Produit produitToEdit = new()
         {
             NomProduit = "Bureau",
             Description = "Un super bureau",
@@ -222,7 +223,7 @@ public class ProductControllerTest
     public void ShouldNotUpdateProductBecauseProductDoesNotExist()
     {
         // Given 
-        Produit produitToEdit = new Produit()
+        Produit produitToEdit = new()
         {
             IdProduit = 20,
             NomProduit = "Bureau",
