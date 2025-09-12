@@ -61,4 +61,34 @@ public class ProductControllerTest
         Assert.IsInstanceOfType(action.Result, typeof(NotFoundResult), "Ne renvoie pas 404");
         Assert.IsNull(action.Value, "Le produit n'est pas null");
     }
+
+    [TestMethod]
+    public void ShouldCreateProduct()
+    {
+        // Given
+        Produit productToInsert = new Produit()
+        {
+            NomProduit = "Chaise",
+            Description = "Une superbe chaise",
+            NomPhoto = "Une superbe chaise bleu",
+            UriPhoto = "https://ikea.fr/chaise.jpg"
+        };
+        
+        // When
+        ActionResult<Produit> action = _productController.Create(productToInsert).GetAwaiter().GetResult();
+        
+        // Then
+        Produit productInDb = _context.Produits.Find(productToInsert.IdProduit);
+        
+        Assert.IsNotNull(productInDb);
+        Assert.IsNotNull(action);
+        Assert.IsInstanceOfType(action.Result, typeof(CreatedAtActionResult));
+    }
+
+    [TestCleanup]
+    public void Cleanup()
+    {
+        _context.Produits.RemoveRange(_context.Produits);
+        _context.SaveChanges();
+    }
 }
