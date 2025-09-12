@@ -22,7 +22,7 @@ public class ProductControllerTest
         var manager = new ProductManager(_context);
         _productController = new ProductController(manager);
     }
-    
+
     [TestMethod]
     public void ShouldGetProduct()
     {
@@ -52,7 +52,7 @@ public class ProductControllerTest
     }
 
     [TestMethod]
-    public void ProductShouldReturnNotFound()
+    public void GetProductShouldReturnNotFound()
     {
         // When : J'appelle la méthode get de mon api pour récupérer le produit
         ActionResult<Produit> action = _productController.Get(0).GetAwaiter().GetResult();

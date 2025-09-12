@@ -36,11 +36,11 @@ public class Produit
 
     [ForeignKey(nameof(IdMarque))]
     [InverseProperty(nameof(Marque.Produits))]
-    public virtual Marque MarqueNavigation { get; set; } = null!;
+    public virtual Marque? MarqueNavigation { get; set; } = null!;
     
     [ForeignKey(nameof(IdTypeProduit))]
     [InverseProperty(nameof(TypeProduit.Produits))]
-    public virtual TypeProduit TypeProduitNavigation { get; set; } = null!;
+    public virtual TypeProduit? TypeProduitNavigation { get; set; } = null!;
 
     protected bool Equals(Produit other)
     {

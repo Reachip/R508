@@ -40,21 +40,19 @@ public partial class AppDbContext : DbContext
         modelBuilder.Entity<TypeProduit>(e =>
         {
             e.HasKey(p => p.IdTypeProduit);
-            
+
             e.HasMany(p => p.Produits)
                 .WithOne(m => m.TypeProduitNavigation)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_produits_type_produit");
+                .OnDelete(DeleteBehavior.ClientSetNull);
         });
         
         modelBuilder.Entity<Marque>(e =>
         {
             e.HasKey(p => p.IdMarque);
-            
+
             e.HasMany(p => p.Produits)
                 .WithOne(m => m.MarqueNavigation)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_produits_marque");
+                .OnDelete(DeleteBehavior.ClientSetNull);
         });
         
         OnModelCreatingPartial(modelBuilder);

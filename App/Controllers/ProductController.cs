@@ -34,4 +34,15 @@ public class ProductController : ControllerBase
     {
         throw new NotImplementedException();
     }
+
+    [HttpPost]
+    public async Task<ActionResult<Produit>> Create(Produit produit)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        await _productManager.AddAsync(produit);
+        return CreatedAtAction("Get", new { id = produit.IdProduit }, produit);
+    }
 }

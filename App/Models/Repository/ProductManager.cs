@@ -22,7 +22,8 @@ public class ProductManager(AppDbContext context) : IDataRepository<Produit>
 
     public async Task AddAsync(Produit entity)
     {
-        throw new NotImplementedException();
+        await context.Produits.AddAsync(entity);
+        await context.SaveChangesAsync();
     }
 
     public async Task UpdateAsync(Produit entityToUpdate, Produit entity)
