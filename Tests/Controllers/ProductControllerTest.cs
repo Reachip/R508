@@ -11,6 +11,7 @@ namespace Tests.Controllers;
 
 [TestClass]
 [TestSubject(typeof(ProductController))]
+[TestCategory("integration")]
 public class ProductControllerTest
 {
     private readonly AppDbContext  _context;
@@ -19,7 +20,6 @@ public class ProductControllerTest
     public ProductControllerTest()
     {
         _context = new AppDbContext();
-        
         var manager = new ProductManager(_context);
         _productController = new ProductController(manager);
     }
@@ -164,6 +164,7 @@ public class ProductControllerTest
     [TestMethod]
     public void ShouldUpdateProduct()
     {
+        // Given 
         Produit produitToEdit = new Produit()
         {
             NomProduit = "Bureau",
@@ -178,8 +179,10 @@ public class ProductControllerTest
         produitToEdit.NomProduit = "Lit";
         produitToEdit.Description = "Un super lit";
 
+        // When
         IActionResult action = _productController.Update(produitToEdit.IdProduit, produitToEdit).GetAwaiter().GetResult();
         
+        // Then
         Assert.IsNotNull(action);
         Assert.IsInstanceOfType(action, typeof(NoContentResult));
         
@@ -187,6 +190,53 @@ public class ProductControllerTest
         
         Assert.AreEqual(produitToEdit.NomProduit, editedProductInDb.NomProduit);
         Assert.AreEqual(produitToEdit.Description, editedProductInDb.Description);
+    }
+    
+    [TestMethod]
+    public void ShouldNotUpdateProductBecauseIdInURLIsDifferent()
+    {
+        // Given 
+        Produit produitToEdit = new Produit()
+        {
+            NomProduit = "Bureau",
+            Description = "Un super bureau",
+            NomPhoto = "Un super bureau bleu",
+            UriPhoto = "https://ikea.fr/bureau.jpg"
+        };
+        
+        _context.Produits.Add(produitToEdit);
+        _context.SaveChanges();
+        
+        produitToEdit.NomProduit = "Lit";
+        produitToEdit.Description = "Un super lit";
+
+        // When
+        IActionResult action = _productController.Update(0, produitToEdit).GetAwaiter().GetResult();
+        
+        // Then
+        Assert.IsNotNull(action);
+        Assert.IsInstanceOfType(action, typeof(BadRequestResult));
+    }
+    
+    [TestMethod]
+    public void ShouldNotUpdateProductBecauseProductDoesNotExist()
+    {
+        // Given 
+        Produit produitToEdit = new Produit()
+        {
+            IdProduit = 20,
+            NomProduit = "Bureau",
+            Description = "Un super bureau",
+            NomPhoto = "Un super bureau bleu",
+            UriPhoto = "https://ikea.fr/bureau.jpg"
+        };
+        
+        // When
+        IActionResult action = _productController.Update(produitToEdit.IdProduit, produitToEdit).GetAwaiter().GetResult();
+        
+        // Then
+        Assert.IsNotNull(action);
+        Assert.IsInstanceOfType(action, typeof(NotFoundResult));
     }
 
     [TestCleanup]
