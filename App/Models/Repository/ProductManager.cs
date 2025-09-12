@@ -1,5 +1,6 @@
 using App.Models.EntityFramework;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace App.Models.Repository;
 
@@ -7,7 +8,7 @@ public class ProductManager(AppDbContext context) : IDataRepository<Produit>
 {
     public async Task<ActionResult<IEnumerable<Produit>>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        return await context.Produits.ToListAsync();
     }
 
     public async Task<ActionResult<Produit?>> GetByIdAsync(int id)
@@ -33,6 +34,7 @@ public class ProductManager(AppDbContext context) : IDataRepository<Produit>
 
     public async Task DeleteAsync(Produit entity)
     {
-        throw new NotImplementedException();
+        context.Produits.Remove(entity);
+        await context.SaveChangesAsync();
     }
 }

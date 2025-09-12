@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using App.Controllers;
 using App.Models;
 using App.Models.EntityFramework;
@@ -51,6 +52,82 @@ public class ProductControllerTest
         // Assert.IsInstanceOfType(action.Result, typeof(OkObjectResult));
     }
 
+    [TestMethod]
+    public void ShouldDeleteProduct()
+    {
+        // Given : Un produit enregistré
+        Produit produitInDb = new Produit()
+        {
+            NomProduit = "Chaise",
+            Description = "Une superbe chaise",
+            NomPhoto = "Une superbe chaise bleu",
+            UriPhoto = "https://ikea.fr/chaise.jpg"
+        };
+
+        _context.Produits.Add(produitInDb);
+        _context.SaveChanges();
+        
+        // When : Je souhaite supprimé un produit depuis l'API
+        IActionResult action = _productController.Delete(produitInDb.IdProduit).GetAwaiter().GetResult();
+        
+        // Then : Le produit a bien été supprimé et le code HTTP est NO_CONTENT (204)
+        Assert.IsNotNull(action);
+        Assert.IsInstanceOfType(action, typeof(NoContentResult));
+        Assert.IsNull(_context.Produits.Find(produitInDb.IdProduit));
+    }
+    
+    [TestMethod]
+    public void ShouldNotDeleteProductBecauseProductDoesNotExist()
+    {
+        // Given : Un produit enregistré
+        Produit produitInDb = new Produit()
+        {
+            NomProduit = "Chaise",
+            Description = "Une superbe chaise",
+            NomPhoto = "Une superbe chaise bleu",
+            UriPhoto = "https://ikea.fr/chaise.jpg"
+        };
+        
+        // When : Je souhaite supprimé un produit depuis l'API
+        IActionResult action = _productController.Delete(produitInDb.IdProduit).GetAwaiter().GetResult();
+        
+        // Then : Le produit a bien été supprimé et le code HTTP est NO_CONTENT (204)
+        Assert.IsNotNull(action);
+        Assert.IsInstanceOfType(action, typeof(NotFoundResult));
+    }
+
+    [TestMethod]
+    public void ShouldGetAllProducts()
+    {
+        // Given : Des produits enregistrées
+        IEnumerable<Produit> productInDb = [
+            new()
+            {
+                NomProduit = "Chaise",
+                Description = "Une superbe chaise",
+                NomPhoto = "Une superbe chaise bleu",
+                UriPhoto = "https://ikea.fr/chaise.jpg"
+            },
+            new()
+            {
+                NomProduit = "Armoir",
+                Description = "Une superbe armoire",
+                NomPhoto = "Une superbe armoire jaune",
+                UriPhoto = "https://ikea.fr/armoire-jaune.jpg"
+            }
+        ];
+        
+        _context.Produits.AddRange(productInDb);
+        _context.SaveChanges();
+        
+        // When : On souhaite récupérer tous les produits
+        var products = _productController.GetAll().GetAwaiter().GetResult();
+
+        // Then : Tous les produits sont récupérés
+        Assert.IsNotNull(products);
+        Assert.IsInstanceOfType(products.Value, typeof(IEnumerable<Produit>));
+    }
+    
     [TestMethod]
     public void GetProductShouldReturnNotFound()
     {

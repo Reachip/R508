@@ -8,9 +8,9 @@ namespace App.Controllers;
 [ApiController]
 public class ProductController : ControllerBase
 {
-    private readonly ProductManager _productManager;
+    private readonly IDataRepository<Produit> _productManager;
     
-    public ProductController(ProductManager manager)
+    public ProductController(IDataRepository<Produit> manager)
     {
         _productManager = manager;
     }
@@ -28,11 +28,22 @@ public class ProductController : ControllerBase
         return result;
     }
 
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        ActionResult<Produit?> produit = await _productManager.GetByIdAsync(id);
+        
+        if (produit.Value == null)
+            return NotFound();
+        
+        await _productManager.DeleteAsync(produit.Value);
+        return NoContent();
+    }
 
     [HttpGet]
-    public async Task<ActionResult<List<Produit>>> GetAll()
+    public async Task<ActionResult<IEnumerable<Produit>>> GetAll()
     {
-        throw new NotImplementedException();
+        return await _productManager.GetAllAsync();
     }
 
     [HttpPost]
