@@ -56,4 +56,23 @@ public class ProductController : ControllerBase
         await _productManager.AddAsync(produit);
         return CreatedAtAction("Get", new { id = produit.IdProduit }, produit);
     }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, Produit produit)
+    {
+        if (id != produit.IdProduit)
+        {
+            return BadRequest();
+        }
+        
+        ActionResult<Produit?> prodToUpdate = await _productManager.GetByIdAsync(id);
+        
+        if (prodToUpdate.Value == null)
+        {
+            return NotFound();
+        }
+        
+        await _productManager.UpdateAsync(prodToUpdate.Value, produit);
+        return NoContent();
+    }
 }

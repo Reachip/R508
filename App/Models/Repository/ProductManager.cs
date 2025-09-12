@@ -29,7 +29,10 @@ public class ProductManager(AppDbContext context) : IDataRepository<Produit>
 
     public async Task UpdateAsync(Produit entityToUpdate, Produit entity)
     {
-        throw new NotImplementedException();
+        context.Produits.Attach(entityToUpdate);
+        context.Entry(entityToUpdate).CurrentValues.SetValues(entity);
+        
+        await context.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(Produit entity)

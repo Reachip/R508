@@ -138,8 +138,7 @@ public class ProductControllerTest
         Assert.IsInstanceOfType(action.Result, typeof(NotFoundResult), "Ne renvoie pas 404");
         Assert.IsNull(action.Value, "Le produit n'est pas null");
     }
-
-    [TestMethod]
+    
     public void ShouldCreateProduct()
     {
         // Given
@@ -160,6 +159,34 @@ public class ProductControllerTest
         Assert.IsNotNull(productInDb);
         Assert.IsNotNull(action);
         Assert.IsInstanceOfType(action.Result, typeof(CreatedAtActionResult));
+    }
+
+    [TestMethod]
+    public void ShouldUpdateProduct()
+    {
+        Produit produitToEdit = new Produit()
+        {
+            NomProduit = "Bureau",
+            Description = "Un super bureau",
+            NomPhoto = "Un super bureau bleu",
+            UriPhoto = "https://ikea.fr/bureau.jpg"
+        };
+        
+        _context.Produits.Add(produitToEdit);
+        _context.SaveChanges();
+        
+        produitToEdit.NomProduit = "Lit";
+        produitToEdit.Description = "Un super lit";
+
+        IActionResult action = _productController.Update(produitToEdit.IdProduit, produitToEdit).GetAwaiter().GetResult();
+        
+        Assert.IsNotNull(action);
+        Assert.IsInstanceOfType(action, typeof(NoContentResult));
+        
+        Produit editedProductInDb = _context.Produits.Find(produitToEdit.IdProduit);
+        
+        Assert.AreEqual(produitToEdit.NomProduit, editedProductInDb.NomProduit);
+        Assert.AreEqual(produitToEdit.Description, editedProductInDb.Description);
     }
 
     [TestCleanup]
