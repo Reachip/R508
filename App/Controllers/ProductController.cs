@@ -6,28 +6,15 @@ namespace App.Controllers;
 
 [Route("api/produits")]
 [ApiController]
-public class ProductController : ControllerBase
+public class ProductController(IDataRepository<Produit> manager) : ControllerBase
 {
-    private readonly IDataRepository<Produit> _productManager;
-    
-    public ProductController(IDataRepository<Produit> manager)
-    {
-        _productManager = manager;
-    }
-    
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Produit?>> Get(int id)
     {
-        var result = await _productManager.GetByIdAsync(id);
-        
-        if(result.Value == null)
-        {
-            return NotFound();
-        }
-        
-        return result;
+        var result = await manager.GetByIdAsync(id);
+        return result.Value == null ? NotFound() : result;
     }
 
     [HttpDelete("{id}")]
@@ -35,12 +22,12 @@ public class ProductController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(int id)
     {
-        ActionResult<Produit?> produit = await _productManager.GetByIdAsync(id);
+        ActionResult<Produit?> produit = await manager.GetByIdAsync(id);
         
         if (produit.Value == null)
             return NotFound();
         
-        await _productManager.DeleteAsync(produit.Value);
+        await manager.DeleteAsync(produit.Value);
         return NoContent();
     }
 
@@ -48,7 +35,7 @@ public class ProductController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<ActionResult<IEnumerable<Produit>>> GetAll()
     {
-        return await _productManager.GetAllAsync();
+        return await manager.GetAllAsync();
     }
 
     [HttpPost]
@@ -60,7 +47,7 @@ public class ProductController : ControllerBase
         {
             return BadRequest(ModelState);
         }
-        await _productManager.AddAsync(produit);
+        await manager.AddAsync(produit);
         return CreatedAtAction("Get", new { id = produit.IdProduit }, produit);
     }
 
@@ -75,14 +62,14 @@ public class ProductController : ControllerBase
             return BadRequest();
         }
         
-        ActionResult<Produit?> prodToUpdate = await _productManager.GetByIdAsync(id);
+        ActionResult<Produit?> prodToUpdate = await manager.GetByIdAsync(id);
         
         if (prodToUpdate.Value == null)
         {
             return NotFound();
         }
         
-        await _productManager.UpdateAsync(prodToUpdate.Value, produit);
+        await manager.UpdateAsync(prodToUpdate.Value, produit);
         return NoContent();
     }
 }
