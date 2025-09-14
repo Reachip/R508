@@ -13,10 +13,11 @@ namespace Tests.Controllers;
 public class ProductControllerMockTest
 {
     private readonly ProductController _productController;
-
+    private readonly Mock<IDataRepository<Produit>>  _produitManager;
+    
     public ProductControllerMockTest()
     {
-        var manager = new Mock<IDataRepository<Produit>>();
-        _productController = new ProductController(manager.Object);
+        _produitManager = new Mock<IDataRepository<Produit>>();
+        _productController = new ProductController(_produitManager.Object);
     }
 }
