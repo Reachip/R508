@@ -1,6 +1,9 @@
 using BlazorApp.Components;
+using BlazorApp.Models;
+using BlazorApp.Service;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddScoped<IService<Produit>, WSService>(_ => new WSService());
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
