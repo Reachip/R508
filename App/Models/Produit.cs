@@ -26,7 +26,7 @@ public class Produit
     public int? IdMarque { get; set; }
 
     [Column("stock_reel")]
-    public int StockReel { get; set; }
+    public int? StockReel { get; set; }
     
     [Column("stock_min")]
     public int StockMin { get; set; }

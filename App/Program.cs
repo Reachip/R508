@@ -1,3 +1,5 @@
+using App.DTO;
+using App.Mapper;
 using App.Models;
 using App.Models.EntityFramework;
 using App.Models.Repository;
@@ -19,7 +21,9 @@ public class Program
         builder.Services.AddSwaggerGen();
         builder.Services.AddDbContext<AppDbContext>();
         builder.Services.AddScoped<IDataRepository<Produit>, ProductManager>();
-        
+        builder.Services.AddSingleton<IMapper<Produit, ProduitDto>, ProduitMapper>();
+        builder.Services.AddSingleton<IMapper<Produit, ProduitDetailDto>, ProduitMapper>();
+
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.

@@ -1,3 +1,5 @@
+using App.DTO;
+using App.Mapper;
 using App.Models;
 using App.Models.Repository;
 using Microsoft.AspNetCore.Mvc;
@@ -6,15 +8,19 @@ namespace App.Controllers;
 
 [Route("api/produits")]
 [ApiController]
-public class ProductController(IDataRepository<Produit> manager) : ControllerBase
+public class ProductController(
+    IMapper<Produit, ProduitDto> produitMapperDTO,  
+    IMapper<Produit, ProduitDetailDto> produitDetailMapper, 
+    IDataRepository<Produit> manager
+    ) : ControllerBase
 {
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Produit?>> Get(int id)
+    public async Task<ActionResult<ProduitDetailDto?>> Get(int id)
     {
         var result = await manager.GetByIdAsync(id);
-        return result.Value == null ? NotFound() : result;
+        return result.Value == null ? NotFound() : produitDetailMapper.FromEntity(result.Value);
     }
 
     [HttpDelete("{id}")]
@@ -33,9 +39,10 @@ public class ProductController(IDataRepository<Produit> manager) : ControllerBas
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<ActionResult<IEnumerable<Produit>>> GetAll()
+    public async Task<ActionResult<IEnumerable<ProduitDto>>> GetAll()
     {
-        return await manager.GetAllAsync();
+        IEnumerable<ProduitDto> produits = produitMapperDTO.ToDTOs((await manager.GetAllAsync()).Value);
+        return new ActionResult<IEnumerable<ProduitDto>>(produits);
     }
 
     [HttpPost]
