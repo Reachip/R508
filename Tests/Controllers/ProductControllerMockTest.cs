@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using App.Controllers;
+using App.DTO;
+using App.Mapper;
 using App.Models;
 using App.Models.Repository;
 using JetBrains.Annotations;
@@ -17,11 +19,13 @@ public class ProductControllerMockTest
 {
     private readonly ProductController _productController;
     private readonly Mock<IDataRepository<Produit>>  _produitManager;
+    private readonly ProduitMapper _produitMapper;
     
     public ProductControllerMockTest()
     {
         _produitManager = new Mock<IDataRepository<Produit>>();
-        _productController = new ProductController(_produitManager.Object);
+        _produitMapper = new ProduitMapper();
+        _productController = new ProductController(_produitMapper, _produitMapper, _produitManager.Object);
     }
     
     
@@ -43,16 +47,16 @@ public class ProductControllerMockTest
             .ReturnsAsync(produitInDb);
         
         // When : On appelle la méthode GET de l'API pour récupérer le produit
-        ActionResult<Produit> action = _productController.Get(produitInDb.IdProduit).GetAwaiter().GetResult();
+        ActionResult<ProduitDetailDto> action = _productController.Get(produitInDb.IdProduit).GetAwaiter().GetResult();
         
         // Then : On récupère le produit et le code de retour est 200
         _produitManager.Verify(manager => manager.GetByIdAsync(produitInDb.IdProduit), Times.Once);
         
         Assert.IsNotNull(action);
-        Assert.IsInstanceOfType(action.Value, typeof(Produit));
+        Assert.IsInstanceOfType(action.Value, typeof(ProduitDetailDto));
         
-        Produit returnProduct = action.Value;
-        Assert.AreEqual(produitInDb, returnProduct);
+        ProduitDetailDto returnProduct = action.Value;
+        Assert.AreEqual(((IMapper<Produit, ProduitDetailDto>)_produitMapper).FromEntity(produitInDb), returnProduct);
     }
 
     [TestMethod]
@@ -143,8 +147,8 @@ public class ProductControllerMockTest
 
         // Then : Tous les produits sont récupérés
         Assert.IsNotNull(products);
-        Assert.IsInstanceOfType(products.Value, typeof(IEnumerable<Produit>));
-        Assert.IsTrue(productInDb.SequenceEqual(products.Value));
+        Assert.IsInstanceOfType(products.Value, typeof(IEnumerable<ProduitDto>));
+        Assert.IsTrue(((IMapper<Produit, ProduitDto>) _produitMapper).ToDTOs(productInDb).SequenceEqual(products.Value));
         
         _produitManager.Verify(manager => manager.GetAllAsync(), Times.Once);
     }
@@ -158,7 +162,7 @@ public class ProductControllerMockTest
             .ReturnsAsync(new ActionResult<Produit>((Produit)null));
         
         // When : On appelle la méthode get de mon api pour récupérer le produit
-        ActionResult<Produit> action = _productController.Get(30).GetAwaiter().GetResult();
+        ActionResult<ProduitDetailDto> action = _productController.Get(30).GetAwaiter().GetResult();
         
         // Then : On ne renvoie rien et on renvoie NOT_FOUND (404)
         Assert.IsInstanceOfType(action.Result, typeof(NotFoundResult), "Ne renvoie pas 404");
