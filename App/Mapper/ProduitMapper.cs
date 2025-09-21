@@ -5,7 +5,7 @@ namespace App.Mapper;
 
 public class ProduitMapper : IMapper<Produit, ProduitDto>, IMapper<Produit, ProduitDetailDto>
 {
-    public Produit? FromDTO(ProduitDto dto)
+    Produit IMapper<Produit, ProduitDto>.ToEntity(ProduitDto dto)
     {
         return new Produit()
         {
@@ -16,7 +16,7 @@ public class ProduitMapper : IMapper<Produit, ProduitDto>, IMapper<Produit, Prod
         };
     }
 
-    public Produit? FromDTO(ProduitDetailDto dto)
+    Produit IMapper<Produit, ProduitDetailDto>.ToEntity(ProduitDetailDto dto)
     {
         return new Produit()
         {
@@ -31,14 +31,14 @@ public class ProduitMapper : IMapper<Produit, ProduitDto>, IMapper<Produit, Prod
         };
     }
 
-    ProduitDetailDto? IMapper<Produit, ProduitDetailDto>.FromEntity(Produit entity)
+    ProduitDetailDto IMapper<Produit, ProduitDetailDto>.ToDTO(Produit entity)
     {
         return new ProduitDetailDto()
         {
             Id = entity.IdProduit,
             Nom = entity.NomProduit,
-            Type =  entity.TypeProduitNavigation != null ? entity.TypeProduitNavigation.NomTypeProduit : null,
-            Marque = entity.MarqueNavigation != null ? entity.MarqueNavigation.NomMarque : null,
+            Type =  entity.TypeProduitNavigation?.NomTypeProduit,
+            Marque = entity.MarqueNavigation?.NomMarque,
             Description = entity.Description,
             Nomphoto = entity.NomPhoto,
             Uriphoto = entity.UriPhoto,
@@ -47,14 +47,14 @@ public class ProduitMapper : IMapper<Produit, ProduitDto>, IMapper<Produit, Prod
         };
     }
 
-    public ProduitDto? FromEntity(Produit entity)
+    ProduitDto IMapper<Produit, ProduitDto>.ToDTO(Produit entity)
     {
         return new ProduitDto()
         {
             Id = entity.IdProduit,
             Nom = entity.NomProduit,
-            Marque = entity.MarqueNavigation != null ? entity.MarqueNavigation.NomMarque : null,
-            Type = entity.TypeProduitNavigation != null ? entity.TypeProduitNavigation.NomTypeProduit : null
+            Marque = entity.MarqueNavigation?.NomMarque,
+            Type = entity.TypeProduitNavigation?.NomTypeProduit
         };
     }
 }

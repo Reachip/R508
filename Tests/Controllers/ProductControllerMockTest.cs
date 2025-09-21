@@ -56,7 +56,7 @@ public class ProductControllerMockTest
         Assert.IsInstanceOfType(action.Value, typeof(ProduitDetailDto));
         
         ProduitDetailDto returnProduct = action.Value;
-        Assert.AreEqual(((IMapper<Produit, ProduitDetailDto>)_produitMapper).FromEntity(produitInDb), returnProduct);
+        Assert.AreEqual(((IMapper<Produit, ProduitDetailDto>)_produitMapper).ToDTO(produitInDb), returnProduct);
     }
 
     [TestMethod]

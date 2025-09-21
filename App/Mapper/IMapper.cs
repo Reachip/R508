@@ -2,16 +2,16 @@ namespace App.Mapper;
 
 public interface IMapper<Entity, DTO>
 {
-    Entity? FromDTO(DTO dto);
-    DTO? FromEntity(Entity entity);
+    Entity ToEntity(DTO dto);
+    DTO ToDTO(Entity entity);
 
-    IEnumerable<DTO?> ToDTOs(IEnumerable<Entity> entities)
+    IEnumerable<DTO> ToDTOs(IEnumerable<Entity> entities)
     {
-        return entities.Select(e => FromEntity(e));
+        return entities.Select(e => ToDTO(e));
     }
     
-    IEnumerable<Entity?> ToEntities(IEnumerable<DTO> entities)
+    IEnumerable<Entity> ToEntities(IEnumerable<DTO> entities)
     {
-        return entities.Select(e => FromDTO(e));
+        return entities.Select(e => ToEntity(e));
     }
 }

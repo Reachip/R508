@@ -20,7 +20,7 @@ public class ProductController(
     public async Task<ActionResult<ProduitDetailDto?>> Get(int id)
     {
         var result = await manager.GetByIdAsync(id);
-        return result.Value == null ? NotFound() : produitDetailMapper.FromEntity(result.Value);
+        return result.Value == null ? NotFound() : produitDetailMapper.ToDTO(result.Value);
     }
 
     [HttpDelete("{id}")]
