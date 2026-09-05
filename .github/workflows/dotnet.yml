@@ -37,6 +37,9 @@ jobs:
 
       - name: Restore dependencies
         run: dotnet restore
+        
+      - name: Build
+        run: dotnet build --no-restore
 
       - name: Install dotnet-ef tool
         run: dotnet tool install --global dotnet-ef
@@ -45,8 +48,8 @@ jobs:
         run: dotnet ef database update --project API
 
       - name: Test
-        run: dotnet test --no-build --verbosity normal
-
+        run: dotnet test API.Tests/API.Tests.csproj --no-build --verbosity normal
+      
       - name: Stop Containers
         if: always()
         run: docker compose down -v
