@@ -10,6 +10,7 @@ docker run -d \
   -e POSTGRES_USER=postgres \
   -e POSTGRES_HOST_AUTH_METHOD=trust \
   -v pgdata_movie:/var/lib/postgresql/data \
+  -v ./init.sql:/docker-entrypoint-initdb.d/init.sql \
   postgres:16
 ```
 
