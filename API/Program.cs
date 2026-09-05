@@ -9,9 +9,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql("Host=localhost;Port=5432;Database=movie;Username=postgres;Password=")
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -1,6 +1,3 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
 name: .NET
 
 on:
@@ -11,18 +8,45 @@ on:
 
 jobs:
   build:
-
+    env:
+      ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=movie;Username=postgres;Password="
+      
     runs-on: ubuntu-latest
-
+    
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+      - uses: actions/checkout@v4
+
+      - name: Start PostgreSQL via Docker Compose
+        run: |
+          docker compose up -d --build
+          until docker compose exec -T postgres pg_isready -U postgres -d movie; do
+            if [ -z "$(docker compose ps --status running -q postgres)" ]; then
+              echo "Le conteneur postgres s'est arrêté inopinément. Logs :"
+              docker compose logs postgres
+              exit 1
+            fi
+            echo "En attente de PostgreSQL (initialisation en cours)..."
+            sleep 2
+          done
+          echo "PostgreSQL est prêt !"
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Install dotnet-ef tool
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Update database
+        run: dotnet ef database update --project API
+
+      - name: Test
+        run: dotnet test --no-build --verbosity normal
+
+      - name: Stop Containers
+        if: always()
+        run: docker compose down -v
