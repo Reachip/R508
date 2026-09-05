@@ -1,0 +1,39 @@
+## Build & Compilations (.NET / C#)
+bin/
+obj/
+out/
+[Bb]uild/
+[Dd]ebug/
+[Rr]elease/
+*.trx
+*.publishsettings
+
+## Visual Studio
+.vs/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.sln.docstates
+
+## JetBrains Rider & IntelliJ Platform
+.idea/
+*.sln.iml
+
+## Données utilisateur & secrets locaux
+appsettings*.local.json
+appsettings.Development.json
+secrets.json
+
+## Packages NuGet & caches
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+project.lock.json
+project.assets.json
+
+## Fichiers OS
+.DS_Store
+Thumbs.db
+ehthumbs.db
