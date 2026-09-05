@@ -1,12 +1,17 @@
 services:
   postgres:
-    image: postgres:16-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile-postgres
     container_name: postgres_db
     environment:
+      POSTGRES_HOST_AUTH_METHOD: "trust"
       POSTGRES_DB: movie
       POSTGRES_USER: postgres
-      POSTGRES_HOST_AUTH_METHOD: trust
     ports:
       - "5432:5432"
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
