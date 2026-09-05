@@ -5,20 +5,24 @@ namespace API.Controller;
 
 [ApiController]
 [Route("api/product")]
-public class ProductController : ControllerBase
+public class ProductController(AppDbContext context) : ControllerBase
 {
     // GET api/product
     [HttpGet]
-    public ActionResult<Product> GetProduct(int id)
+    public ActionResult<Product> GetProduct( int id)
     {
-        return Ok();
+        var products = context.Products.ToList();
+        return Ok(products);
     }
 
     // POST api/product
     [HttpPost]
     public ActionResult<Product> CreateProduct([FromBody] Product product)
     {
-        return Ok();
+        context.Products.Add(product);
+        context.SaveChanges();
+        
+        return Ok(product);
     }
 
     // PATCH api/product
